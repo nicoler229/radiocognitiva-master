@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from myapp.views import fft_view
+from radiocognitiva.myapp.views import fft_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),

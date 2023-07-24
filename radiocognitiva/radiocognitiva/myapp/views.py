@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.shortcuts import render
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from django.http import HttpResponse
 import io
