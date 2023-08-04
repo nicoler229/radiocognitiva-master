@@ -50,12 +50,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'radiocognitiva.urls'
+ROOT_URLCONF = 'radiocognitiva.radiocognitiva.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'radiocognitiva/myapp/templates'],
+        'DIRS': [BASE_DIR / 'myapp/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -68,7 +68,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'radiocognitiva.wsgi.application'
+WSGI_APPLICATION = 'radiocognitiva.radiocognitiva.wsgi.application'
 
 
 # Database

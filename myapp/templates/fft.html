@@ -1,83 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Gráfica FFT</title>
-    <!-- Incluir los estilos de Bootstrap -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Gráficos FFT</title>
 </head>
 <body>
-    <div class="container mt-4">
-        <!-- Cuadros de texto para TX y RX -->
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="tx-input">TX:</label>
-                    <input type="text" class="form-control" id="tx-input" placeholder="Ingrese el valor de TX">
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="rx-input">RX:</label>
-                    <input type="text" class="form-control" id="rx-input" placeholder="Ingrese el valor de RX">
-                </div>
-            </div>
-        </div>
-        <!-- Gráfica FFT -->
-        <div class="row">
-            <div class="col-md-12">
-                <canvas id="fft-chart" width="400" height="200"></canvas>
-            </div>
-        </div>
-        <!-- Botón de START -->
-        <div class="row mt-3">
-            <div class="col-md-12">
-                <button type="button" class="btn btn-primary" id="start-btn">START</button>
-            </div>
-        </div>
-    </div>
+    <h2>Espectro de frecuencia RX</h2>
+    <img src="data:image/png;base64,{{ image_base64 }}" alt="Espectro de frecuencia RX">
 
-    <!-- Incluir la librería de Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        // Función para generar la gráfica FFT
-        function generateFFTChart() {
-            // Datos de la gráfica (puedes reemplazar estos valores por los datos reales)
-            var txValue = parseFloat(document.getElementById('tx-input').value);
-            var rxValue = parseFloat(document.getElementById('rx-input').value);
-            var fftData = [txValue, rxValue];
-
-            // Crear la gráfica usando Chart.js
-            var ctx = document.getElementById('fft-chart').getContext('2d');
-            var myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['TX', 'RX'],
-                    datasets: [{
-                        label: 'Valores FFT',
-                        data: fftData,
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)'
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        }
-
-        // Asociar la función de generar la gráfica al botón START
-        document.getElementById('start-btn').addEventListener('click', generateFFTChart);
-    </script>
+    <h2>Espectro de frecuencia TX</h2>
+    <img src="data:image/png;base64,{{ image_base64 }}" alt="Espectro de frecuencia TX">
 </body>
 </html>
