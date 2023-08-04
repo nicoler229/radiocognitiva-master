@@ -50,4 +50,4 @@ def fft_view(request):
 
     # Renderizar la plantilla y pasar los datos del gráfico a la misma
     context = {'image_base64': image_base64} """
-    return render(request, "index.html")
+    return render(request, "fft.html")
