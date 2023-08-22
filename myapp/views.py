@@ -1,53 +1,58 @@
 from django.shortcuts import render
-from django.shortcuts import render
-import numpy as np
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-from django.http import HttpResponse
-import io
-import base64
+from django.shortcuts import redirect
+from .models import Canales
+from mutagen.mp3 import MP3
 
-# Create your views here.
+
+
 def post_list(request):
     return render(request, 'blog/post_list.html', {})
 
-def fft_view(request):
-    """ # Generar señales de ejemplo para RX y TX
-    fs = 1000  # Frecuencia de muestreo
-    t = np.arange(0, 1, 1/fs)  # Vector de tiempo
-    f1 = 10  # Frecuencia de la señal RX
-    f2 = 15  # Frecuencia de la señal TX
-    rx = np.sin(2*np.pi*f1*t)
-    tx = np.sin(2*np.pi*f2*t)
+def home_view(request):
+ 
+    return render(request, "home.html")
 
-    # Calcular la FFT de las señales
-    RX = np.fft.fft(rx)
-    TX = np.fft.fft(tx)
-    freq = np.fft.fftfreq(len(rx), 1/fs)
+#PASO 1: ESTABLECER RANGO DE FRECUENCIA 
+def establecer_rango(request):
+    if request.method == 'POST':
+        form = RangoFrecuenciasForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('ver-rangos')
+    else:
+        form = forms.RangoFrecuenciasForm()
+    
+    return render(request, 'index.html', {'form': form})
 
-    # Crear la ventana de gráfico
-    fig, axes = plt.subplots(2, 1, figsize=(8, 6))
+def ver_rangos(request):
+    rangos = RangoFrecuencias.objects.all()
+    return render(request, 'index.html', {'rangos': rangos})
 
-    # Graficar la FFT de RX
-    axes[0].plot(freq, np.abs(RX))
-    axes[0].set_xlabel('Frecuencia (Hz)')
-    axes[0].set_ylabel('Magnitud')
-    axes[0].set_title('Espectro de frecuencia RX')
+#def calcular_parametros(request):
 
-    # Graficar la FFT de TX
-    axes[1].plot(freq, np.abs(TX))
-    axes[1].set_xlabel('Frecuencia (Hz)')
-    axes[1].set_ylabel('Magnitud')
-    axes[1].set_title('Espectro de frecuencia TX')
+def subir_mp3(request):
+    if request.method == 'POST':
+        form = SubirMP3Form(request.POST, request.FILES)
+        if form.is_valid():
+            archivo = form.cleaned_data['archivo_mp3']
+            # Aquí puedes hacer lo que quieras con el archivo, como guardarlo en el servidor o en la base de datos
+            return render(request, 'subir_mp3.html', {'form': form, 'mensaje': 'Archivo subido exitosamente'})
+    else:
+        form = UploadMP3Form()
+    return render(request, 'subir_mp3.html', {'form': form})
+      
 
-    # Guardar el gráfico en un buffer de memoria
-    buffer = io.BytesIO()
-    plt.savefig(buffer, format='png')
-    buffer.seek(0)
-    image_base64 = base64.b64encode(buffer.read()).decode('utf-8')
-    buffer.close()
 
-    # Renderizar la plantilla y pasar los datos del gráfico a la misma
-    context = {'image_base64': image_base64} """
-    return render(request, "fft.html")
+#PASO 2: CORRER DETECTOR EN UN HILO PARA QUE ALMACENE DATA DE LOS CANALES DISPONIBLES EN LA BASE DE DATOS
+def bloqueCognitivo(request):
+    canales = Canales.objects.all()
+    canal_seleccionado = null
+    # Itera a través de los canales y obtén los valores que deseas
+    for canal in canales:
+        frecuencia = canal.frecuencia
+        bandwidth = canal.bandwidth
+        potencia = canal.potencia     
+
+#PASO 3: OBTENER VALORES DESDE EL MODELO DE CANALES P
+#PASO 4: CORRER BLOQUE COGNITIVO CON LA INFORMACION DE LOS CANALES Y ELEGIR EL MAS OPTIMO
+#

@@ -16,9 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from myapp.views import fft_view
+from myapp import views 
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('fft/', fft_view, name='fft')
+    path('establecer-rango/', views.establecer_rango, name='establecer-rango'),
+    path('ver-rangos/', views.ver_rangos, name='ver-rangos')
 ]
