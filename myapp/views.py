@@ -1,53 +1,92 @@
 from django.shortcuts import render
-from django.shortcuts import render
-import numpy as np
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-from django.http import HttpResponse
-import io
-import base64
+from django.shortcuts import redirect
+from .models import Canales
+from mutagen.mp3 import MP3
+from .forms import RangoFrecuenciasForm
 
-# Create your views here.
+
+
 def post_list(request):
     return render(request, 'blog/post_list.html', {})
 
-def fft_view(request):
-    """ # Generar señales de ejemplo para RX y TX
-    fs = 1000  # Frecuencia de muestreo
-    t = np.arange(0, 1, 1/fs)  # Vector de tiempo
-    f1 = 10  # Frecuencia de la señal RX
-    f2 = 15  # Frecuencia de la señal TX
-    rx = np.sin(2*np.pi*f1*t)
-    tx = np.sin(2*np.pi*f2*t)
+def home_view(request):
+ 
+    return render(request, "vista.html")
 
-    # Calcular la FFT de las señales
-    RX = np.fft.fft(rx)
-    TX = np.fft.fft(tx)
-    freq = np.fft.fftfreq(len(rx), 1/fs)
+#PASO 1: ESTABLECER RANGO DE FRECUENCIA 
+def establecer_rango(request):
+    if request.method == 'POST':
+        form = RangoFrecuenciasForm(request.POST)
+        if form.is_valid():
+            frecuencia_inicial = form.cleaned_data['frecuencia_inicial']
+            frecuencia_final = form.cleaned_data['frecuencia_final']
+            form.save()
+            return redirect('ver-rangos')
+    else:
+        form = RangoFrecuenciasForm()
+    
+    return render(request, 'vista.html', {'form': form})
 
-    # Crear la ventana de gráfico
-    fig, axes = plt.subplots(2, 1, figsize=(8, 6))
+def ver_rangos(request):
+    rangos = RangoFrecuencias.objects.all()
+    return render(request, 'index.html', {'rangos': rangos})
 
-    # Graficar la FFT de RX
-    axes[0].plot(freq, np.abs(RX))
-    axes[0].set_xlabel('Frecuencia (Hz)')
-    axes[0].set_ylabel('Magnitud')
-    axes[0].set_title('Espectro de frecuencia RX')
+#SUBIR ARCHIVO MP3
+def subir_mp3(request):
+    if request.method == 'POST':
+        form = SubirMP3Form(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            archivo = form.cleaned_data['archivo_mp3']
+            # Aquí puedes hacer lo que quieras con el archivo, como guardarlo en el servidor o en la base de datos
+            return render(request, 'subir_mp3.html', {'form': form, 'mensaje': 'Archivo subido exitosamente'})
+    else:
+        form = UploadMP3Form()
+    return render(request, 'subir_mp3.html', {'form': form})
 
-    # Graficar la FFT de TX
-    axes[1].plot(freq, np.abs(TX))
-    axes[1].set_xlabel('Frecuencia (Hz)')
-    axes[1].set_ylabel('Magnitud')
-    axes[1].set_title('Espectro de frecuencia TX')
+def anchoDeBandaMp3():
+    archivo_mp3 = Archivos.objects.last() #ultimo archivo subido
+    info_mp3 = MP3(archivo_mp3)
+    tasa_bits_audio = info_mp3.info.bitrate
+    numero_simbolos_por_segundo = 1000
+    ancho_banda_necesario = tasa_bits_audio / numero_simbolos_por_segundo
+    print(f"Ancho de Banda Necesario: {ancho_banda_necesario:.2f} Hz")
+    return ancho_banda_necesario
 
-    # Guardar el gráfico en un buffer de memoria
-    buffer = io.BytesIO()
-    plt.savefig(buffer, format='png')
-    buffer.seek(0)
-    image_base64 = base64.b64encode(buffer.read()).decode('utf-8')
-    buffer.close()
+def calcular_snr_min(capacidad, ancho_de_banda_minimo):
+    snr_min = capacidad / bandwidth
+    return snr_min
 
-    # Renderizar la plantilla y pasar los datos del gráfico a la misma
-    context = {'image_base64': image_base64} """
-    return render(request, "fft.html")
+
+
+#PASO 2: CORRER DETECTOR EN UN HILO PARA QUE ALMACENE DATA DE LOS CANALES DISPONIBLES EN LA BASE DE DATOS
+def bloqueCognitivo(request):
+    canales = Canales.objects.all()
+    canal_seleccionado = none 
+    mejor_puntuacion = float('-inf')
+    ancho_de_banda_minimo = anchoDeBandaMp3()
+    capacidad = 1000
+    potencia_maxima = -70
+    snr_min = calcular_snr_min(capacidad, ancho_de_banda_minimo)
+    print(f"SNR mínimo requerido: {snr_min:.2f} dB")
+    #PASO 3: OBTENER VALORES DESDE EL MODELO DE CANALES P
+    for canal in canales:
+        frecuencia = canal.frecuencia
+        ancho_banda_suficiente = canal.bandwith >= ancho_de_banda_minimo
+        snr_aceptable = canal.snr >= snr_minimo
+        potencia_baja = canal.potencia <= potencia_maxima
+        puntuacion = ancho_banda_suficiente + snr_aceptable + (1 / potencia_baja)
+
+        if puntuacion > mejor_puntuacion:
+                mejor_puntuacion = puntuacion
+                mejor_espacio = canal
+
+        return mejor_espacio
+
+
+# Definir los valores mínimos para cada parámetro
+#ancho_banda_minimo_mp3 = 128  # kbps
+#snr_minimo = 10  # dB
+  # dBm
+
+#PASO 4: CORRER BLOQUE COGNITIVO CON LA INFORMACION DE LOS CANALES Y ELEGIR EL MAS OPTIMO
