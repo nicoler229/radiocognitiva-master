@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grafica</title>
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -15,13 +16,12 @@
         <h1>Gráfico</h1>
     </div>
 
-    <div class="info">
-        <div class="infolabel">
-            <h2 class="label">Tx</h2>
-            <div class="infosquare"> 
-                <div id="data"> <h3>200</h3></div>
-                  <div class="labeldata"><h5>Fq</h5></div>
-            </div>
+    <div class="info" >
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Enviar</button>
+        </form>
             </div>
         
         <div class="infolabel">
@@ -42,7 +42,7 @@
     </div>  -->
     <div class="graphic">
         <canvas id="myAreaChart" style="height: 300px; width: 100%;"></canvas>
-        <script src="grafico.js"></script>
+        <script src="{% static 'grafico.js' %}"></script>
     </div>
 
 </Main>
