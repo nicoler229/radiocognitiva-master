@@ -1,3 +1,4 @@
+from django.test import TestCase
 from django.shortcuts import render
 import numpy as np
 import matplotlib.pyplot as plt
@@ -5,10 +6,7 @@ from django.http import HttpResponse
 import io
 import base64
 
-# Create your views here.
-def post_list(request):
-    return render(request, 'blog/post_list.html', {})
-
+# Create your tests here.
 def fft_view(request):
     # Generar señales de ejemplo para RX y TX
     fs = 1000  # Frecuencia de muestreo
@@ -44,8 +42,7 @@ def fft_view(request):
     buffer.seek(0)
     image_base64 = base64.b64encode(buffer.read()).decode('utf-8')
     buffer.close()
-    print('hello')
 
     # Renderizar la plantilla y pasar los datos del gráfico a la misma
     context = {'image_base64': image_base64}
-    return render(request, 'grafica/fft.html', context)
+    return render(request, 'fft.html', context)
